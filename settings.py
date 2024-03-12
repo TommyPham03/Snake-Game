@@ -20,3 +20,4 @@ def save_preferences(preferences):
 def update_theme(new_theme):
     if new_theme in themes:
         save_preferences({"theme": new_theme})
+
