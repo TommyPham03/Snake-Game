@@ -48,12 +48,15 @@ def draw_game_over_screen(surface, score, width, height, theme):
     scoreText = font.render(f'Score: {score}', True, theme['snake'])
     playAgainText = font.render('Play Again', True, theme['snake'])
     exitText = font.render('Exit', True, theme['snake'])
+    mainMenuText = font.render('Main Menu', True, theme['snake'])
+
 
     # Centering the text on the screen
     gameOverRect = gameOverText.get_rect(center=(width // 2, height // 2 - 90))
     scoreRect = scoreText.get_rect(center=(width // 2, height // 2))
-    playAgainRect = playAgainText.get_rect(center=(width // 2, height // 2 + 60))
-    exitRect = exitText.get_rect(center=(width // 2, height // 2 + 120))
+    playAgainRect = playAgainText.get_rect(center=(width // 2, height // 2 + 55))
+    mainMenuRect = mainMenuText.get_rect(center=(width // 2, height // 2 + 100))
+    exitRect = exitText.get_rect(center=(width // 2, height // 2 + 160))
 
     # Game over loop
     while True:
@@ -61,18 +64,21 @@ def draw_game_over_screen(surface, score, width, height, theme):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                return False  # Exits the game completely
+                return 'quit'  # Exits the game completely
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = event.pos
                 if playAgainRect.collidepoint(mouse_pos):
-                    return True  # Indicates the player wants to play again
+                    return 'play_again'  # Indicates the player wants to play again
+                if mainMenuRect.collidepoint(event.pos):
+                    return 'main_menu'
                 if exitRect.collidepoint(mouse_pos):
                     pygame.quit()
-                    return False  # Exits the game completely
+                    return 'quit'  # Exits the game completely
 
         surface.blit(gameOverText, gameOverRect)
         surface.blit(scoreText, scoreRect)
         surface.blit(playAgainText, playAgainRect)
+        surface.blit(mainMenuText, mainMenuRect)
         surface.blit(exitText, exitRect)
 
         pygame.display.update()
