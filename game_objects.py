@@ -118,4 +118,3 @@ def random_snack(snake, rows):
             x, y = random.randrange(rows), random.randrange(rows)
             if (x, y) not in positions:
                 return (x, y)
-
