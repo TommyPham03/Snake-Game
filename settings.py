@@ -21,3 +21,14 @@ def update_theme(new_theme):
     if new_theme in themes:
         save_preferences({"theme": new_theme})
 
+def get_high_score():
+    try:
+        with open("high_score.txt", "r") as f:
+            high_score = int(f.read())
+    except (FileNotFoundError, ValueError):
+        high_score = 0
+    return high_score
+
+def save_high_score(high_score):
+    with open("high_score.txt", "w") as f:
+        f.write(str(high_score))
