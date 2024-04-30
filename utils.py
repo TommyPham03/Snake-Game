@@ -2,7 +2,7 @@ import pygame
 from settings import themes
 import json
 import os
-
+from settings import get_text_size, load_preferences
 import pygame
 
 def draw_text_input_box(surface, font, input_rect, color_active, color_inactive, active, text=''):
@@ -14,11 +14,16 @@ def draw_text_input_box(surface, font, input_rect, color_active, color_inactive,
     pygame.display.update()
     return text
 
+
 def get_user_input(surface, question):
     """ Function to get user input using a simple text box in Pygame. """
     pygame.font.init()
-    base_font = pygame.font.Font(None, 32)
-    title_font = pygame.font.Font(None, 40)
+    preferences = load_preferences()  # Load preferences
+    text_size = get_text_size(preferences)  # Get dynamic text size
+
+    base_font = pygame.font.Font(None, text_size)  # Use dynamic text size
+    title_font = pygame.font.Font(None, text_size + 8)  # Slightly larger for title
+
     user_text = ''
     input_rect = pygame.Rect(surface.get_width() // 2 - 70, surface.get_height() // 2, 140, 32)
     color_active = pygame.Color('lightskyblue3')
@@ -106,11 +111,15 @@ def redraw_window(surface, snake, snack, width, theme, rows, current_score, high
 
     pygame.display.update()
 
+
 def settings_menu(surface, themes):
+    preferences = load_preferences()
+    text_size = get_text_size(preferences)
+
     run = True
-    sfont = pygame.font.SysFont("ariel", 54)
-    ifont = pygame.font.SysFont("ariel", 24)
-    font = pygame.font.SysFont("ariel", 34)
+    sfont = pygame.font.Font(None, text_size + 20)
+    ifont = pygame.font.Font(None, text_size + 8)
+    font = pygame.font.Font(None, text_size)
     surface.fill(themes["light"]["background"])  # Assume light theme for settings background
 
     snake_main_text = sfont.render('Snake Game', True, (80, 10, 18))
@@ -141,11 +150,13 @@ def settings_menu(surface, themes):
                 elif dark_rect.collidepoint(event.pos):
                     return "dark"
 
-
 def draw_game_over_screen(surface, score, width, height, theme):
-    pygame.font.init()  # Initialize font module
-    sfont = pygame.font.SysFont("ariel", 74)
-    font = pygame.font.SysFont('Arial', 35)
+    pygame.font.init()
+    preferences = load_preferences()
+    text_size = get_text_size(preferences)
+
+    sfont = pygame.font.Font(None, text_size + 20)
+    font = pygame.font.Font(None, text_size)
     gameOverText = sfont.render('Game Over', True, theme['snake'])
     scoreText = font.render(f'Score: {score}', True, theme['snake'])
     playAgainText = font.render('Play Again', True, theme['snake'])
@@ -185,8 +196,11 @@ def draw_game_over_screen(surface, score, width, height, theme):
         pygame.display.update()
 
 def difficulty_menu(surface, theme):
+    preferences = load_preferences()
+    text_size = get_text_size(preferences)
+
     run = True
-    font = pygame.font.SysFont("ariel", 34)
+    font = pygame.font.Font(None, text_size)
     surface.fill(theme['background'])  # Fill the background once per setting
 
     title_text = font.render('Select Difficulty:', True, theme['snake'])

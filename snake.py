@@ -3,14 +3,47 @@ from settings import load_preferences, save_preferences, themes, update_theme, g
 from game_objects import Snake, Cube, random_snack
 from utils import redraw_window, settings_menu, draw_game_over_screen, difficulty_menu, load_or_create_profile, save_user_data
 from utils import load_or_create_profile, get_user_input, save_user_data
+from settings import get_text_size
 
+
+def text_size_menu(win):
+    run = True
+    clock = pygame.time.Clock()
+    selected_size = load_preferences().get('text_size', 'medium')  # Load current or default size
+
+    while run:
+        win.fill((0, 0, 0))  # Clear the screen
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                run = False
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    selected_size = 'small' if selected_size == 'medium' else 'medium' if selected_size == 'large' else 'large'
+                elif event.key == pygame.K_DOWN:
+                    selected_size = 'large' if selected_size == 'medium' else 'medium' if selected_size == 'small' else 'small'
+                elif event.key == pygame.K_RETURN:
+                    preferences = load_preferences()
+                    preferences['text_size'] = selected_size
+                    save_preferences(preferences)
+                    run = False
+
+        # Display current selected text size
+        font = pygame.font.Font(None, 36)
+        text = font.render(f"Text Size: {selected_size}", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(win.get_width() / 2, win.get_height() / 2))
+        win.blit(text, text_rect)
+        pygame.display.update()
+        clock.tick(15)
 def main_menu(win):
-    preferences = load_preferences()
-    current_theme = preferences.get("theme", "dark")
-    chosen_theme = settings_menu(win, themes)
+    text_size_menu(win)  # User selects text size here
+    preferences = load_preferences()  # Reload preferences to get updated text size
+    current_theme = preferences.get("theme", "dark")  # Load current theme, defaulting to 'dark'
+    chosen_theme = settings_menu(win, themes)  # Let user choose a theme
     if chosen_theme and chosen_theme != current_theme:
         current_theme = chosen_theme
-        update_theme(chosen_theme)
+        update_theme(chosen_theme)  # Update the theme if changed
     return current_theme
 
 def game_loop(win, current_theme, width, height, rows, cols, difficulty, user_data):
